@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "task-manager-api"
+version = "0.1.0"
+description = ""
+authors = ["algakz06 <77662392+algakz06@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.112.0"
+sqlalchemy = "^2.0.32"
+uvicorn = "^0.30.5"
+loguru = "^0.7.2"
+python-dotenv = "^1.0.1"
+pydantic-settings = "^2.4.0"
+
+[tool.pyright]
+venvPath = "/Users/kimdaniil/Library/Caches/pypoetry/virtualenvs"
+venv = "task-manager-api-Rjv94mcA-py3.12"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
