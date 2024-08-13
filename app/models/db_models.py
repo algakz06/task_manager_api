@@ -1,13 +1,15 @@
-from datetime import datetime
+from typing import Any
 
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import ForeignKey, DateTime
+from sqlalchemy import JSON, ForeignKey
 
 from app.configs.Database import Engine
 
 
 class Base(DeclarativeBase):
-    pass
+    type_annotation_map = {
+        dict[str, Any]: JSON
+    }
 
 
 class Task(Base):
@@ -30,7 +32,7 @@ class Face(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     image_id: Mapped[int] = mapped_column(ForeignKey("image.id", ondelete="CASCADE"))
     sex: Mapped[str]
-    bbox: Mapped[str]
+    bounding_box: Mapped[dict[str, Any]]
     age: Mapped[int]
 
 

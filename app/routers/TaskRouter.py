@@ -5,7 +5,6 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from typing import Annotated
 
-from app.configs.Loger import log
 from app.configs.Settings import settings
 from app.metadata.errors import NoExtensionSupported
 from app.services.TaskService import TaskService

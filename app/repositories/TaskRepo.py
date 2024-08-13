@@ -6,7 +6,7 @@ from typing import List
 from app.configs.Database import get_db
 from app.metadata.errors import NoTaskFound
 from app.models import db_models
-from app.schemas.TaskSchemas import Image, Task, Face
+from app.schemas.TaskSchemas import Face
 
 
 class TaskRepo:
@@ -33,7 +33,7 @@ class TaskRepo:
         self.db_conn.commit()
         return task.id
 
-    def get_task(self, task_id: int) -> Task:
+    def get_task(self, task_id: int) -> db_models.Task:
         db_task = (
             self.db_conn.query(db_models.Task)
             .filter(db_models.Task.id == task_id)
@@ -41,22 +41,15 @@ class TaskRepo:
         )
         if not db_task:
             raise NoTaskFound
-        images = self.get_images_by_task_id(db_task.id)
-        return Task(task_id=db_task.id, images=images)
+        return db_task
 
-    def get_images_by_task_id(self, task_id: int) -> List[Image]:
+    def get_images_by_task_id(self, task_id: int) -> List[db_models.Image]:
         db_images = (
             self.db_conn.query(db_models.Image)
             .filter(db_models.Image.task_id == task_id)
             .all()
         )
-        return [
-            Image(
-                image_id=image.id,
-                faces=self.get_faces_by_image_id(image.id),
-            )
-            for image in db_images
-        ]
+        return db_images
 
     def get_image_pathes_by_task_id(self, task_id: int) -> List[str]:
         db_images = (
@@ -66,20 +59,13 @@ class TaskRepo:
         )
         return [image.path for image in db_images]
 
-    def get_faces_by_image_id(self, image_id: int) -> List[Face]:
+    def get_faces_by_image_id(self, image_id: int) -> List[db_models.Face]:
         db_faces = (
             self.db_conn.query(db_models.Face)
             .filter(db_models.Face.image_id == image_id)
             .all()
         )
-        return [
-            Face(
-                bbox=face.bbox,
-                sex=face.sex,
-                age=face.age,
-            )
-            for face in db_faces
-        ]
+        return db_faces
 
     def add_image(self, task_id: int, path_to_image: str):
         db_image = db_models.Image(task_id=task_id, path=path_to_image)
@@ -88,13 +74,15 @@ class TaskRepo:
 
         return db_image.id
 
-    def add_face(self, image_id: int, face: Face):
-        db_face = db_models.Face(
-            image_id=image_id, sex=face.sex, bbox=face.bbox, age=face.age
-        )
-        self.db_conn.add(db_face)
-
-    def add_many_faces(self, image_id: int, faces: List[Face]):
-        for face in faces:
-            self.add_face(image_id, face)
+    def add_faces(self, image_id: int, faces: List[Face]):
+        db_faces = [
+            db_models.Face(
+                image_id=image_id,
+                sex=face.sex,
+                bounding_box=face.bbox.model_dump_json(),
+                age=face.age,
+            )
+            for face in faces
+        ]
+        self.db_conn.add_all(db_faces)
         self.db_conn.commit()

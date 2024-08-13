@@ -5,4 +5,4 @@
 - [X] GET api/v1/task
 - [X] DELETE api/v1/task
 - [X] POST api/v1/task/image/add
-- [ ] Link API to FaceCloud
+- [X] Link API to FaceCloud

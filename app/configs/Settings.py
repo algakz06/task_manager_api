@@ -18,6 +18,12 @@ class Settings(BaseSettings):
     ADMIN_USERNAME: str
     ADMIN_PWD: str
 
+    BROKER_URI: str = "redis://redis:6379"
+
+    FACECLOUD_EMAIL: str
+    FACECLOUD_PWD: str
+    FACECLOUD_URL: str = "https://backend.facecloud.tevian.ru"
+
     ACCESS_TOKEN_EXPIRE: int = 60 * 24 * 8
 
     POSTGRES_DB: str = "postgres"

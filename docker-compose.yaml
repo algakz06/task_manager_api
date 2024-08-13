@@ -6,27 +6,6 @@ volumes:
 
 name: tasks_manager
 services:
-  #
-  # traefik:
-  #   image: traefik:v2.5
-  #   command:
-  #     - "--log.level=INFO"
-  #     - "--providers.docker=true"
-  #     - "--providers.docker.exposedbydefault=false"
-  #     - "--entrypoints.web.address=:80"
-  #     - "--entrypoints.websecure.address=:443"
-  #     - "--certificatesresolvers.myhttpchallenge.acme.httpchallenge=true"
-  #     - "--certificatesresolvers.myhttpchallenge.acme.httpchallenge.entrypoint=web"
-  #     - "--certificatesresolvers.myhttpchallenge.acme.email=kimdaniil2003r@gmail.com"
-  #     - "--certificatesresolvers.myhttpchallenge.acme.storage=/letsencrypt/acme.json"
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - "/var/run/docker.sock:/var/run/docker.sock"
-  #     - "./letsencrypt:/letsencrypt"
-  #   restart: unless-stopped
-
   db:
     image: postgres:14
     restart: always
@@ -61,11 +40,29 @@ services:
       - "3333:3333"
     depends_on:
       - db
-    # labels:
-    #   - "traefik.enable=true"
-    #   - "traefik.http.services.api.loadbalancer.server.port=3333"
-    #   - "traefik.http.routers.api.rule=Host(``)"
-    #   - "traefik.http.routers.api.entrypoints=web"
-    #   - "traefik.http.routers.api-secure.rule=Host(``)"
-    #   - "traefik.http.routers.api-secure.entrypoints=websecure"
-    #   - "traefik.http.routers.api-secure.tls.certresolver=myhttpchallenge"
+
+  worker:
+    build: .
+    command: celery -A app.worker.celery worker --loglevel=info
+    env_file:
+      - .env
+    volumes:
+      - "./images:/images"
+    depends_on:
+      - api
+      - redis
+
+  flower:
+    build: .
+    command: celery -A app.worker.celery flower --port=5001
+    ports:
+      - 5001:5001
+    env_file:
+      - .env
+    depends_on:
+      - api
+      - redis 
+
+
+  redis:
+    image: redis:7
