@@ -8,6 +8,7 @@ from app.configs.Loger import log
 async def on_startup():
     try:
         init()
+        log.info("DB was initializated successfully")
     except Exception as e:
         log.error(f"Error occured while starting up db: {e}")
 

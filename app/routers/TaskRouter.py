@@ -1,12 +1,10 @@
-import secrets
-
 from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from typing import Annotated
+import secrets
 
 from app.configs.Settings import settings
-from app.metadata.errors import NoExtensionSupported
 from app.services.TaskService import TaskService
 from app.schemas import TaskSchemas
 
@@ -35,7 +33,7 @@ def get_current_username(
     return credentials.username
 
 
-@router.post("/create")
+@router.post("/create", status_code=201)
 async def create_task(
     _: Annotated[str, Depends(get_current_username)],
     taskService: TaskService = Depends(),
@@ -64,14 +62,12 @@ async def delete_task(
     return {"task_id": task_id}
 
 
-@router.post("/image/add")
+@router.post("/image/add", status_code=202)
 async def add_image_to_task(
     task_id: int,
     _: Annotated[str, Depends(get_current_username)],
     taskService: TaskService = Depends(),
     image: UploadFile = File(...),
 ):
-    if image.content_type != "image/jpeg":
-        raise NoExtensionSupported
     image_id = await taskService.add_image(task_id, image)
     return {"image_id": image_id}

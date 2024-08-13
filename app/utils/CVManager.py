@@ -1,5 +1,6 @@
-from typing import List
 import requests
+
+from typing import List
 
 from app.schemas.TaskSchemas import Face
 
@@ -38,7 +39,7 @@ class CVManager:
                 f"{self.FACECLOUD_URL}/api/v1/detect",
                 headers=headers,
                 data=file.read(),
-                params={"demographics": "true"}
+                params={"demographics": "true"},
             )
         if r.status_code == 400:
             self.get_token()
@@ -51,11 +52,10 @@ class CVManager:
                     f"{self.FACECLOUD_URL}/api/v1/detect",
                     headers=headers,
                     data=file.read(),
-                    params={"demographics": "true"}
+                    params={"demographics": "true"},
                 )
 
         faces = []
-        print(r.json())
         for face in r.json()["data"]:
             faces.append(
                 Face(

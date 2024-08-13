@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic_core import MultiHostUrl
 from pydantic import computed_field, PostgresDsn
+
 from typing import List
 
 
@@ -23,8 +24,6 @@ class Settings(BaseSettings):
     FACECLOUD_EMAIL: str
     FACECLOUD_PWD: str
     FACECLOUD_URL: str = "https://backend.facecloud.tevian.ru"
-
-    ACCESS_TOKEN_EXPIRE: int = 60 * 24 * 8
 
     POSTGRES_DB: str = "postgres"
     POSTGRES_HOST: str = "db"

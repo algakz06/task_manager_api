@@ -3,6 +3,7 @@ version: "3"
 volumes:
   db:
   logs:
+  images:
 
 name: tasks_manager
 services:

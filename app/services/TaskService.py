@@ -2,9 +2,9 @@ from fastapi import Depends, UploadFile
 
 import pathlib
 from typing import List
-import json
 import uuid
 
+from app.metadata.errors import NoExtensionSupported
 from app.models import db_models
 from app.repositories.TaskRepo import TaskRepo
 from app.schemas import TaskSchemas
@@ -60,6 +60,9 @@ class TaskService:
         return task
 
     async def add_image(self, task_id: int, image: UploadFile) -> int:
+        if image.content_type not in ["image/jpeg"]:
+            log.error(f"got image with unsupported extension: {image.content_type}")
+            raise NoExtensionSupported
         path_to_image = await self.save_image(image)
         image_id = self.repo.add_image(task_id, path_to_image)
         detect_face.delay(path_to_image, image_id)  # type: ignore
@@ -73,7 +76,6 @@ class TaskService:
                 log.info(f"image with path: {image.resolve()} was deleted")
             else:
                 log.info(f"image with path: {image.resolve()} wasnt found")
-                continue
 
     async def save_image(self, image: UploadFile) -> str:
         image.filename = f"{uuid.uuid4()}.jpg"

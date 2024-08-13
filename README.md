@@ -26,6 +26,23 @@ vi .env
 # make sure docker daemon running on and launch the project
 docker compose up -d
 ```
+there are few .env variables you should set:
+```python
+# POSTGRES vars to up DB
+POSTGRES_USER=
+POSTGRES_DB=
+POSTGRES_PASSWORD=
+
+# USER vars for Basic Auth
+ADMIN_USERNAME=
+ADMIN_PWD=
+
+# FACECLOUD vars for access API
+FACECLOUD_EMAIL=
+FACECLOUD_PWD=
+FACECLOUD_URL=https://
+```
+
 ## Usage
 After launching project you can go Swagger with `http://localhost:3333/docs` and Flower wtih `http://localhost:5001`.
 ### Endpoints
