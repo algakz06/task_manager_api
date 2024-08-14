@@ -68,6 +68,13 @@ class TaskRepo:
         return db_faces
 
     def add_image(self, task_id: int, path_to_image: str):
+        db_task = (
+            self.db_conn.query(db_models.Task)
+            .filter(db_models.Task.id == task_id)
+            .first()
+        )
+        if db_task is None:
+            raise NoTaskFound
         db_image = db_models.Image(task_id=task_id, path=path_to_image)
         self.db_conn.add(db_image)
         self.db_conn.commit()
